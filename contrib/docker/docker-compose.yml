@@ -1,0 +1,56 @@
+version: '3'
+services:
+  redis:
+    image: redis:3.2
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+
+  mysql:
+    image: mysql:5
+    restart: unless-stopped 
+    # command: --init-file /init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: password 
+      MYSQL_DATABASE: mysql_database 
+      MYSQL_USER: user 
+      MYSQL_PASSWORD: password 
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql:/var/lib/mysql
+      # - ./init.sql:/init.sql
+  superset:
+    build:
+      context: ../../
+      dockerfile: contrib/docker/Dockerfile
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: mysql_database 
+      MYSQL_USER: user 
+      MYSQL_PASSWORD: password 
+      MYSQL_HOST: mysql 
+      MYSQL_PORT: 3306 
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # If using production, comment development volume below
+      #SUPERSET_ENV: production
+      SUPERSET_ENV: development
+    ports:
+      - 8088:8088
+    depends_on:
+      - mysql 
+      - redis
+    volumes:
+      # this is needed to communicate with the mysql and redis services
+      - ./superset_config.py:/home/superset/superset/superset_config.py
+      # this is needed for development, remove with SUPERSET_ENV=production
+      - ../../superset:/home/superset/superset
+
+volumes:
+  mysql:
+    external: false
+  redis:
+    external: false
