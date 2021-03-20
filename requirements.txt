@@ -46,7 +46,7 @@ ijson==2.3                # via tabulator
 isodate==0.6.0
 itsdangerous==0.24        # via flask
 jdcal==1.4                # via openpyxl
-jinja2==2.10              # via flask, flask-babel
+jinja2==2.11.3              # via flask, flask-babel
 jsonlines==1.2.0          # via tabulator
 jsonschema==2.6.0         # via tableschema
 kombu==4.2.1              # via celery
